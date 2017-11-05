@@ -1,0 +1,140 @@
+/*Напишите программу для работы с датами согласно григорианскому календарю.
+ В программе должны присутствовать:
+* структура хранящая год,месяц, число и умеющая(с помощью соответствующего метода)
+ определять по дате день недели
+* 3 функции определяющие сколько лет, месяцев и дней прошло между двумя датами*/
+
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+struct Data
+{
+    int ch;
+    int m;
+    int g;
+};
+struct Segment 
+{
+    Data d1;
+    Data d2;
+};
+
+int dnei_v_mes(Data u)
+{
+    if (((u.g % 400 == 0) || (u.g % 100 != 0 && u.g%4 == 0)) && u.m == 2)
+        u.m = (28 + (u.m+u.m/8)%2 + 2%u.m + 2*(1/u.m)) + 1;
+    else
+        u.m = 28 + (u.m+u.m/8)%2 + 2%u.m + 2*(1/u.m);
+    return u.m;
+}
+
+long long vsego(Data p)
+{
+    long long vse_dni = 0;
+
+    for(int i = 1; i<p.g; i++)
+    {
+        if ((i % 400 == 0) || (i % 100 != 0 && i%4 == 0))
+            vse_dni += 366;
+        else
+            vse_dni += 365;
+    }
+    for(int i = 1; i<p.m; i++)
+    {
+        vse_dni += dnei_v_mes(p);
+    }
+
+    vse_dni += p.ch;
+    return vse_dni;
+
+}
+
+long long den_nedeli(Data dnii)
+{
+    return vsego(dnii) % 7;
+}
+
+long long dnei(Segment re)
+{
+    return abs(vsego(re.d1) - vsego(re.d2));
+}
+
+long long mes(Segment pre)
+{
+    return abs((pre.d1.g*12 + pre.d1.m) -(pre.d2.g*12 + pre.d2.m));
+}
+
+long long let(Segment prew)
+{
+    return abs(prew.d1.g - prew.d2.g);
+}
+
+int main()
+{
+    int ch, m, g, ch2, m2, g2;
+    string s;
+    for(int i = 2; i!=1; i++) 
+    {
+        cout << "день недели - nedel\n"
+                "дней между датами - dnei\n"
+                "месяцев между датами - mes\n"
+                "лет между датами - let"
+                " end - закончить программу\n"
+                " Пример использования: let 3 11 2017 3 11 2018\n"
+                "1\n"
+                "end\n";
+        cin >> s;
+        if (s == "end")
+            return 0;
+        else if (s == "nedel") 
+        {
+            cin >> ch >> m >> g;
+            Data z;
+            z.g = g;
+            z.m = m;
+            z.ch = ch;
+            cout<<endl<<den_nedeli(z)<<endl;
+        }
+        else if (s == "dnei")
+        {
+            cin >> ch >> m >> g >> ch2 >> m2 >> g2;
+            Segment z;
+            z.d1.ch = ch;
+            z.d1.m = m;
+            z.d1.g = g;
+            z.d2.g = g2;
+            z.d2.m = m2;
+            z.d2.ch = ch2;
+
+            cout<<endl<<dnei(z)<<endl;
+        }
+        else if (s == "mes")
+        {
+            cin >> ch >> m >> g >> ch2 >> m2 >> g2;
+            Segment z;
+            z.d1.ch = ch;
+            z.d1.m = m;
+            z.d1.g = g;
+            z.d2.g = g2;
+            z.d2.m = m2;
+            z.d2.ch = ch2;
+            cout<<endl<<mes(z)<<endl;
+        }
+        else if (s == "let")
+        {
+            cin >> ch >> m >> g >> ch2 >> m2 >> g2;
+            Segment z;
+            z.d1.ch = ch;
+            z.d1.m = m;
+            z.d1.g = g;
+            z.d2.g = g2;
+            z.d2.m = m2;
+            z.d2.ch = ch2;
+            cout<<endl<<let(z)<<endl;
+        }
+
+    }
+  return 0;
+}
