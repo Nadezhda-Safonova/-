@@ -1,0 +1,337 @@
+/*Напишите программу для работы с оценками за сессию студентов.
+В программе должна присутствовать структура хранящая ФИО,
+ оценки за 6 экзаменов для каждого ученика и умеющая (соответствующими методами)
+ вычислять средний балл студента,
+ наличие стипендии(стипендия начисляется закрывшим сессию без троек),
+ задолженностей (сессия считается закрытой без долгов, если все оценки выше 2)
+в программе должны быть функции для работы с массивом студентов
+ находящие средний балл(всех без двух лучших и двух худших),
+ количества стипендиатов, должников и отчисленных(более двух долгов)*/
+ 
+#include <iostream>
+#include <string>
+
+
+using namespace std;
+
+struct info
+{
+    string Surname;
+    string Name;
+    string MiddleName;
+    int q;
+    int w;
+    int e;
+    int r;
+    int t;
+    int y;
+    double sr;
+    int ste;
+    string st;
+    int zad;
+};
+
+void fun(int m[], info z)
+{
+    z.q = m[0];
+    z.w = m[1];
+    z.e = m[2];
+    z.r = m[3];
+    z.t = m[4];
+    z.y = m[5];
+
+    for(int i = 0; i<6; i++)
+    {
+        if(m[i] < 4)
+        {
+            z.st = "\nНет стипендии";
+            z.ste = 0;
+            i = 6;
+        }
+        else
+        {
+            z.st = "\nСо стипендией";
+            z.ste = 1;
+        }
+    }
+    z.zad = 0;
+    for(int i = 0; i<6; i++)
+    {
+        if(m[i] == 2)
+            z.zad++;
+    }
+    cout<<z.Surname<<" "<<z.Name<<" "<<z.MiddleName<<" ";
+    for(int i = 0; i<6; i++)
+    {
+        cout<<m[i]<<" ";
+    }
+
+    z.sr = (double)(z.q + z.w + z.e + z.r + z.t + z.y)/6;
+
+    cout<<"\nСредний балл :"<<z.sr<<z.st<<"\nДолгов :"<<z.zad;
+
+}
+
+double vsesred(int y, double z[])
+{
+    if (y-1<5)
+    {
+        return 0;
+    }
+    double max = 0, min = 5, max2 = 0, min2 = 5;
+    int  q, w, e, r;
+    for(int i = 0; i<y-1; i++)
+    {
+        if(z[i] >= max)
+        {
+            max = z[i];
+            q = i;
+        }
+        if(z[i] <= min)
+        {
+            w = i;
+            min = z[i];
+        }
+    }
+    for(int i = 0; i<y-1; i++)
+    {
+        if(i != q && i != w)
+        {
+            if(z[i] >= max2)
+            {
+                e = i;
+                max2 = z[i];
+            }
+            if(z[i] <= min2)
+            {
+                r = i;
+                min2 = z[i];
+            }
+        }
+    }
+
+    double temp = 0;
+    for(int i = 0; i<y-1; i++)
+    {
+        if(i != q && i != w && i != e && i != r)
+        {
+            temp += z[i];
+        }
+    }
+    temp = temp/(y-1-4);
+    return temp;
+}
+
+int otchisl(int * arr, int y) 
+{
+    int kolvo = 0;
+    for(int i= 0; i < y; i++)
+    {
+        if (arr[i] >= 2)
+        {
+            kolvo++;
+        }
+    }
+    return kolvo;
+}
+
+int dolg(int * arr, int y) 
+{
+    int kolvo = 0;
+    for(int i= 0; i < y; i++)
+    {
+        if (arr[i] == 1)
+        {
+            kolvo++;
+        }
+    }
+    return kolvo;
+}
+
+int step(int * arr, int y)
+{
+    int kolvo = 0;
+    for(int i= 0; i < y; i++)
+    {
+        if (arr[i] == 1)
+        {
+            kolvo++;
+        }
+    }
+    return kolvo;
+}
+
+
+int main()
+{
+
+    int a;
+    cout << "Введите количество учеников: ";
+    cin >> a;
+    string m[a + 1][9];
+    m[0][0] = "ФИО   ";
+    m[0][1] = "О";
+    m[0][2] = "ц";
+    m[0][3] = "е";
+    m[0][4] = "н";
+    m[0][5] = "к";
+    m[0][6] = "и";
+
+    int n[a + 1][9];
+    for(int i = 0; i<= a; i++)
+    {
+        for(int j = 0; j<9; j++)
+        {
+            n[i][j]=0;
+        }
+    }
+
+
+    for (int i = 1; i <= a; i++)
+    {
+        cout << "Введите ФИО ученика :";
+        for(int h = 0; h<=2; h++)
+            cin>>m[i][h];
+        cout<< "Введите оценки :";
+        for(int j = 3; j<9; j++)
+        {
+            cin>>n[i][j];
+            m[i][j] = to_string(n[i][j]);
+        }
+    }
+
+
+    //вывод
+
+    int temp = 0, max = 0;
+    for(int i = 1; i<a+1; i++)
+    {
+        for (int j = 0; j<=2; j++)
+        {
+            temp += m[i][j].length();
+        }
+        if(temp >= max)
+            max = temp;
+        temp = 0;
+    }
+    for(int i = 0; i<a+1; i++)
+    {
+        for (int j = 0; j<9; j++)
+        {
+            cout<<m[i][j]<<" ";
+            if(j == 2 && i>=1)
+            {
+                for (int h = 0; h<=2; h++)
+                {
+                    temp += m[i][h].length();
+                }
+                temp = (max - temp)/2;
+                for(int h = 0; h<temp; h++)
+                    cout<<" ";
+                temp = 0;
+            }
+            else if(i == 0 && j == 0)
+            {
+                temp = (max - m[0][0].length())/2;
+                for(int h = 0; h<=temp; h++)
+                    cout<<" ";
+                temp = 0;
+            }
+        }
+        cout<<endl;
+    }
+    //массив выведен
+
+    cout<<"\nВведите фамилию и имя человека, "
+            "\nинформацию о котором, вы хотели бы узнать: ";
+    string nem, men;
+    for(int h = 3; h>2; h++)
+    {
+        cin>>nem>>men;
+        for(int i = 1; i<=a; i++)
+        {
+            if(m[i][0] == nem && m[i][1] == men)
+            {
+                int iu[6];
+                for(int j = 0; j<6; j++)
+                {
+                    iu[j] = n[i][j+3];
+                }
+                info b;
+                b.Surname = m[i][0];
+                b.Name = m[i][1];
+                b.MiddleName = m[i][2];
+                b.q = iu[0];
+                b.w = iu[1];
+                b.e = iu[2];
+                b.r = iu[3];
+                b.t = iu[4];
+                b.y = iu[5];
+                fun(iu, b);
+                i = a;
+            }
+        }
+        cout<<"\nИнтересен ли еще кто-то? \n"
+                "Да/Нет\n";
+        cin>>nem;
+        if(nem == "Да")
+        {
+            cout<<"\nВведите фамилию и имя человека, "
+                    "\nинформацию о котором, вы хотели бы узнать: ";
+        }
+        else
+        {
+            h = 0;
+        }
+    }
+
+double sredn[a];
+int mas[a];
+    temp = 0;
+    int stepuxa[a];
+for(int i = 1; i<=a; i++)
+{
+    int iu[6];
+    for(int j = 0; j<6; j++)
+    {
+        iu[j] = n[i][j+3];
+        if(iu[j] == 2)
+        {
+            temp++;
+        }
+    }
+    info b;
+    b.q = iu[0];
+    b.w = iu[1];
+    b.e = iu[2];
+    b.r = iu[3];
+    b.t = iu[4];
+    b.y = iu[5];
+    b.sr = (double)(b.q + b.w + b.e + b.r + b.t + b.y)/6;
+    sredn[i-1] = b.sr;
+    mas[i-1] = temp;
+    temp = 0;
+    for(int ih = 0; ih<6; ih++)
+    {
+        if(iu[ih] < 4)
+        {
+            stepuxa[i] = 0;
+            ih = 6;
+        }
+        else
+        {
+            stepuxa[i] = 1;
+        }
+    }
+}
+
+
+
+    cout<<"\nОтчислено человек: "<<otchisl(mas, a);
+    cout<<"\nДолжников: "<<dolg(mas, a);
+    cout<<"\nСтипендиатов: "<<step(stepuxa, a);
+    cout<<"\nСредний балл: "<<vsesred(a+1, sredn);
+
+
+    return 0;
+}
